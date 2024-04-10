@@ -1,0 +1,21 @@
+{
+  "name": "com.ig.lib.uguiExtension",
+  "version": "0.1.0",
+  "displayName": "ig.lib.uguiExtension",
+  "description": "issue game lib extension",
+  "keywords": [
+    "ig",
+    "ig lib",
+    "extension"
+  ],
+  "documentationUrl": "",
+  "changelogUrl": "",
+  "author": {
+    "name": "issuegame caleb",
+    "url": ""
+  },
+  "type": "library",
+  "dependencies": {
+    "DOTween"
+  }
+}
