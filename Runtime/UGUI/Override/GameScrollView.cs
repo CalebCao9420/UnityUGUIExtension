@@ -7,6 +7,16 @@ using Object = UnityEngine.Object;
 namespace IG.Runtime.Extension.UGUI{
     public class GameScrollView : ScrollRect{
         /// <summary>
+        /// Using dynamic width
+        /// </summary>
+        public bool DynamicWidth;
+
+        /// <summary>
+        /// Using dynamic height
+        /// </summary>
+        public bool DynamicHeight;
+        
+        /// <summary>
         /// Display column count
         /// </summary>
         public int ColumnCount = 1;
@@ -333,12 +343,20 @@ namespace IG.Runtime.Extension.UGUI{
 
             int count = Mathf.Clamp(_currentShowList.Count, 0, pageSize);
             //Display objects that appear within the display range
+            Vector2 prePos = Vector2.zero;
             for (int i = _beginIndex; i < _DataList.Count && i < _beginIndex + count; i++){
                 int index = i % count;
                 _currentShowList[index].gameObject.SetActive(true);
                 _currentShowList[index].transform.SetParent(this.content);
                 _currentShowList[index].SetData(_DataList[i]);
-                SetItemPostion(i, _currentShowList[index].transform as RectTransform);
+                // SetItemPosition(i, _currentShowList[index].transform as RectTransform);
+                // 新方式,考虑动态item 宽高
+                if (DynamicHeight || DynamicWidth){
+                    prePos = SetItemPosition(i,_currentShowList[index],prePos);
+                }
+                else{
+                    SetItemPosition(i, _currentShowList[index].transform as RectTransform);
+                }
             }
         }
 
@@ -365,7 +383,7 @@ namespace IG.Runtime.Extension.UGUI{
         /// </summary>
         /// <param name="index">Index.</param>
         /// <param name="rectTransform">Rect transform.</param>
-        protected virtual void SetItemPostion(int index, RectTransform rectTransform){
+        protected virtual void SetItemPosition(int index, RectTransform rectTransform){
             int x = 0;
             int y = 0;
             if (this.horizontal){
@@ -383,6 +401,51 @@ namespace IG.Runtime.Extension.UGUI{
             //        rectTransform.anchoredPosition = new Vector2(x * itemSize.x + spacing.x, y * itemSize.y - spacing.y);
             Vector2 newPos = new Vector2(x * itemSize.x + Left, y * itemSize.y - Top);
             rectTransform.anchoredPosition = newPos;
+        }
+        
+        /// <summary>
+        /// Set item coordinates
+        /// </summary>
+        /// <param name="index">Index.</param>
+        /// <param name="srItem">Rect transform.</param>
+        protected virtual Vector2 SetItemPosition(int index, GameScrollItem srItem, Vector2 prePos){
+            Vector2 newPos = Vector2.zero;
+            int     x      = 0;
+            int     y      = 0;
+            if (this.horizontal){
+                x = index / RowCount;
+                y = -index % RowCount;
+            }
+
+            if (this.vertical){
+                y = -index / ColumnCount;
+                x = index % ColumnCount;
+            }
+
+            float width  = x * itemSize.x + Left;
+            float height = y * itemSize.y - Top;
+            if (DynamicWidth){
+                width = prePos.x;
+            }
+
+            if (DynamicHeight){
+                height = prePos.y;
+            }
+
+            srItem.UIRect().localPosition    = Vector3.zero;
+            srItem.UIRect().localScale       = Vector3.one;
+            newPos                           = new Vector2(width,height );
+            srItem.UIRect().anchoredPosition = newPos;
+            
+            if (DynamicWidth){
+                newPos.x += srItem.GetWidth() + Spacing.x + Left;
+            }
+
+            if (DynamicHeight){
+                newPos.y += -srItem.GetHeight() - Spacing.y - Top; 
+            }
+            
+            return newPos;
         }
 
         /// <summary>

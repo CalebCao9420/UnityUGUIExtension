@@ -10,7 +10,9 @@ namespace IG.Runtime.Extension.UGUI{
             SetData(isRepeatRefresh);
         }
 
-        protected abstract void SetData(bool isRepeatRefresh);
+        protected abstract void  SetData(bool isRepeatRefresh);
+        public abstract    float GetWidth();
+        public abstract    float GetHeight();
     }
 
     /// <summary>
