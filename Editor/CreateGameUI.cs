@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -15,7 +16,7 @@ namespace IG.Editor.Extension.UGUI{
             //TODO:需要写一个ReleaseConfig，根据ReleaseConfig的状态set路径，或者直接ReleaseConfig里边就是路径
             string packagesPath = Application.dataPath + "/../Packages/ig.lib.uguiExtension/Res/EditorRes/UGUI/GameScrollView.prefab";
             string localPath    = "Assets/UnityUGUIExtension/Res/EditorRes/UGUI/GameScrollView.prefab";
-            string loadPath = String.Empty;
+            string loadPath     = String.Empty;
             if (File.Exists(packagesPath)){
                 loadPath = packagesPath;
             }
@@ -23,7 +24,7 @@ namespace IG.Editor.Extension.UGUI{
                 loadPath = localPath;
             }
 
-            GameObject gameObject   = AssetDatabase.LoadAssetAtPath<GameObject>(loadPath);
+            GameObject gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(loadPath);
             gameObject      = GameObject.Instantiate(gameObject, Selection.activeTransform);
             gameObject.name = "GameScrollView";
             PlaceUIElementRoot(gameObject, menuCommand);
@@ -37,7 +38,7 @@ namespace IG.Editor.Extension.UGUI{
 
             string uniqueName = GameObjectUtility.GetUniqueNameForSibling(parent.transform, element.name);
             element.name = uniqueName;
-            Undo.RegisterCreatedObjectUndo(element, "Create " + element.name);
+            Undo.RegisterCreatedObjectUndo(element, "Create "                      + element.name);
             Undo.SetTransformParent(element.transform, parent.transform, "Parent " + element.name);
             GameObjectUtility.SetParentAndAlign(element, parent);
             Selection.activeGameObject = element;
@@ -92,3 +93,4 @@ namespace IG.Editor.Extension.UGUI{
         }
     }
 }
+#endif

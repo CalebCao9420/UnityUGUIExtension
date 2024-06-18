@@ -1,4 +1,5 @@
-﻿using IG.Runtime.Extension.UGUI;
+﻿#if UNITY_EDITOR
+using IG.Runtime.Extension.UGUI;
 using UnityEditor;
 
 namespace IG.Editor.Extension.UGUI{
@@ -6,3 +7,4 @@ namespace IG.Editor.Extension.UGUI{
     public class GameScrollViewEditor : UnityEditor.Editor{
     }
 }
+#endif
