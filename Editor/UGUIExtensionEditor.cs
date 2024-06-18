@@ -1,6 +1,5 @@
 using UnityEditor;
 using UnityEngine;
-using UnitySDK.UI;
 
 namespace IG.UGUIExtension{
     public class UGUIExtensionEditor{

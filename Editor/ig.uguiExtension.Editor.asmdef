@@ -1,13 +1,14 @@
 {
-    "name": "ig.uguiExtension",
+    "name": "ig.uguiExtension.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:cac1b197ec4fe7d4185fb587c2a094e6"
+        "GUID:4aed5180ba0af42469252a5861f2f579"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
+    "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],

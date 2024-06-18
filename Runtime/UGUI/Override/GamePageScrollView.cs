@@ -6,10 +6,10 @@ using UnityEngine.UI;
 using DG.Tweening;
 using IG.AssetBundle;
 using IG.Runtime.Common.Timer;
+using IG.UGUIExtension;
 
 namespace IG.Runtime.Extension.UGUI{
     public class GamePageScrollView : MonoBehaviour, IDragHandler, IEndDragHandler{
-        public UnityTimer    Timer;
         public bool          Horizontal;
         public bool          Vertical;
         public RectTransform Content;
@@ -65,6 +65,7 @@ namespace IG.Runtime.Extension.UGUI{
         /// </summary>
         private int _beginIndex = 0;
 
+        private UnityTimer     _timer;
         private int            _oldBeginIndex = 0;
         private GameScrollItem _currentGameScrollItem;
         private bool           _isPlayAnim = false;
@@ -104,7 +105,7 @@ namespace IG.Runtime.Extension.UGUI{
         public void SetData<T>(List<T> data) where T : IGameScrollItemData{
             this._dataList.Clear();
             int len = data?.Count ?? 0;
-            for (int i = 0; i <len; ++i){
+            for (int i = 0; i < len; ++i){
                 _dataList.Add(data[i]);
             }
 
@@ -112,8 +113,8 @@ namespace IG.Runtime.Extension.UGUI{
             InitContent();
             InitItemPrefab();
             if (_isDrag){
-                if (Timer != null){
-                    this.Timer = UnityTimer.SetInterval(3.0f, AutoChangePageEvent);
+                if (_timer != null){
+                    this._timer = UnityTimer.SetInterval(3.0f, AutoChangePageEvent);
                 }
             }
         }
