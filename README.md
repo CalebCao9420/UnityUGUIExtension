@@ -1,2 +1,1 @@
-# UnityUGUIExtension
-Simple unity ugui extension
+A simple UGUI extension function

@@ -4,10 +4,12 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using DG.Tweening;
+using IG.AssetBundle;
+using IG.Runtime.Common.Timer;
 
 namespace IG.Runtime.Extension.UGUI{
-    public sealed class GamePageScrollView : MonoBehaviour, IDragHandler, IEndDragHandler{
-        public UITimer       UiTimer;
+    public class GamePageScrollView : MonoBehaviour, IDragHandler, IEndDragHandler{
+        public UnityTimer    Timer;
         public bool          Horizontal;
         public bool          Vertical;
         public RectTransform Content;
@@ -36,7 +38,7 @@ namespace IG.Runtime.Extension.UGUI{
         /// <summary>
         /// The item prefab
         /// </summary>
-        public GameObject ItemPrefab = null;
+        public string ItemPrefabPath = null;
 
         /// <summary>
         /// The point path.
@@ -74,9 +76,9 @@ namespace IG.Runtime.Extension.UGUI{
         /// Current display area item number
         /// </summary>
         /// <value>The size of the get page.</value>
-        private int _PageSize{ get{ return ColumnCount * RowCount; } }
+        protected int _PageSize{ get{ return ColumnCount * RowCount; } }
 
-        private Vector2 _ItemSize{ get{ return CellSize + Spacing; } }
+        protected Vector2 _ItemSize{ get{ return CellSize + Spacing; } }
 
         void Awake(){
             _dataList        = new List<IGameScrollItemData>();
@@ -97,23 +99,21 @@ namespace IG.Runtime.Extension.UGUI{
         /// <summary>
         /// Set the data source
         /// </summary>
-        /// <param name="datas">Datas.</param>
+        /// <param name="data">Datas.</param>
         /// <typeparam name="T">IGameScrollItemData.</typeparam>
-        public void SetDatas<T>(List<T> datas) where T : IGameScrollItemData{
+        public void SetData<T>(List<T> data) where T : IGameScrollItemData{
             this._dataList.Clear();
-            for (int i = 0; i < datas.Count; i++){
-                _dataList.Add(datas[i]);
+            int len = data?.Count ?? 0;
+            for (int i = 0; i <len; ++i){
+                _dataList.Add(data[i]);
             }
 
             _isDrag = _dataList.Count > 1;
             InitContent();
             InitItemPrefab();
-            //		this.ResetPos ();
             if (_isDrag){
-                if (UiTimer != null){
-                    UiTimer.step      = 3f;
-                    UiTimer.StepEvent = AutoChangePageEvent;
-                    UiTimer.RePlay();
+                if (Timer != null){
+                    this.Timer = UnityTimer.SetInterval(3.0f, AutoChangePageEvent);
                 }
             }
         }
@@ -125,8 +125,8 @@ namespace IG.Runtime.Extension.UGUI{
                 return;
             }
 
-            if (ItemPrefab == null){
-                Debug.LogError("GameScrollRect' ItemPrefab is null.");
+            if (string.IsNullOrEmpty(ItemPrefabPath)){
+                Debug.LogError("GameScrollRect' ItemPrefabPath is null.");
                 return;
             }
 
@@ -145,14 +145,20 @@ namespace IG.Runtime.Extension.UGUI{
                     continue;
                 }
 
-                GameObject     ga   = Object.Instantiate(ItemPrefab,this.Content) as GameObject;
-                GameScrollItem item = ga.GetComponent<GameScrollItem>();
-                item.transform.SetParent(this.Content);
-                item.gameObject.SetActive(false);
-                this.Add(item);
-                if (_currentShowList.Count == count){
-                    this.RefreshData();
-                }
+                AssetSystem.LoadAsync(
+                                      (o, oArg) => {
+                                          GameScrollItem item = (o as GameObject).GetComponent<GameScrollItem>();
+                                          item.transform.SetParent(this.Content);
+                                          item.gameObject.SetActive(false);
+                                          this.Add(item);
+                                          //				this.ResetPos ();
+                                          if (_currentShowList.Count == count){
+                                              this.RefreshData();
+                                          }
+                                      },
+                                      ItemPrefabPath,
+                                      typeof(GameObject)
+                                     );
             }
 
             if (this.Points.childCount >= _dataList.Count){
@@ -164,24 +170,24 @@ namespace IG.Runtime.Extension.UGUI{
                 for (int i = 0; i < _dataList.Count; i++){
                     if (!string.IsNullOrEmpty(this.PointPath)){
                         StartCoroutine(ResetPointsPos(true));
+                        AssetSystem.LoadAsync(
+                                              (o, oArg) => {
+                                                  ScrollViewPoint item = (o as GameObject).GetComponent<ScrollViewPoint>();
+                                                  item.transform.SetParent(this.Points);
+                                                  if (this.Points.childCount > _dataList.Count){
+                                                      Destroy(item.gameObject);
+                                                      return;
+                                                  }
 
-                        //能异步肯定是最好的
-                        // ScrollViewPoint it = AssetSystem.LoadByMedian(PathConfig.BundleRelated.UI_BUNDLE, PointPath, ItemMediaPath, typeof(ScrollViewPoint)) as ScrollViewPoint;
-                        //TODO:替换成AssetSystem
-                        ScrollViewPoint it   = Resources.Load<ScrollViewPoint>(PointPath);
-                        ScrollViewPoint item = UnityEngine.Object.Instantiate(it);
-                        item.transform.SetParent(this.Points);
-                        //能异步最好
-                        if (this.Points.childCount > _dataList.Count){
-                            GameObject.Destroy(item.gameObject);
-                            return;
-                        }
+                                                  if (this.Points.childCount == _dataList.Count){
+                                                      StartCoroutine(ResetPointsPos(false));
+                                                  }
 
-                        if (this.Points.childCount == _dataList.Count){
-                            StartCoroutine(ResetPointsPos(false));
-                        }
-
-                        RestPoints();
+                                                  RestPoints();
+                                              },
+                                              PointPath,
+                                              typeof(GameObject)
+                                             );
                     }
                 }
             }
@@ -341,7 +347,7 @@ namespace IG.Runtime.Extension.UGUI{
             Move(_beginIndex);
         }
 
-        private void LocalItemScale(RectTransform rectTransform){ }
+        protected virtual void LocalItemScale(RectTransform rectTransform){ }
 
         private void Move(int index){
             Vector2 pos = Vector2.zero;

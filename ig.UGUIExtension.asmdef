@@ -1,0 +1,17 @@
+{
+    "name": "ig.uguiExtension",
+    "rootNamespace": "",
+    "references": [
+        "GUID:cac1b197ec4fe7d4185fb587c2a094e6",
+        "GUID:2d2abb6689259bd4b8d3c799a00d9706"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

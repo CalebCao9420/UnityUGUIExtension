@@ -1,12 +1,12 @@
 {
-  "name": "com.ig.lib.uguiExtension",
+  "name": "com.ig.uguiextension",
   "version": "0.1.0",
-  "displayName": "ig.lib.uguiExtension",
-  "description": "issue game lib extension",
+  "displayName": "ig.uguiextension",
+  "description": "issue game lib.uguiextension",
   "keywords": [
     "ig",
     "ig lib",
-    "extension"
+    "uguiextension"
   ],
   "documentationUrl": "",
   "changelogUrl": "",
@@ -15,7 +15,5 @@
     "url": ""
   },
   "type": "library",
-  "dependencies": {
-    "DOTween"
-  }
+  "dependencies": {}
 }
