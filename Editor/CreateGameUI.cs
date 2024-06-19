@@ -9,12 +9,12 @@ using Object = UnityEngine.Object;
 
 namespace IG.Editor.Extension.UGUI{
     public static class CreateGameUI{
+        private const string PACKAGE_NAME = "com.ig.uguiextension";
         private const string kUILayerName = "UI";
 
         [MenuItem("GameObject/UI/Game Scroll View")]
         public static void CreateGameScrollView(MenuCommand menuCommand){
-            //TODO:需要写一个ReleaseConfig，根据ReleaseConfig的状态set路径，或者直接ReleaseConfig里边就是路径
-            string packagesPath = Application.dataPath + "/../Packages/ig.lib.uguiExtension/Res/EditorRes/UGUI/GameScrollView.prefab";
+            string packagesPath = $"Packages/{PACKAGE_NAME}/Res/EditorRes/UGUI/GameScrollView.prefab";
             string localPath    = "Assets/UnityUGUIExtension/Res/EditorRes/UGUI/GameScrollView.prefab";
             string loadPath     = String.Empty;
             if (File.Exists(packagesPath)){
