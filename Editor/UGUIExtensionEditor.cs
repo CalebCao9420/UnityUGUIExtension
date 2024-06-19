@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace IG.UGUIExtension{
     public class UGUIExtensionEditor{
-        [MenuItem("GameObject/程序工具/UI/UIText", false, 10)]
+        [MenuItem("GameObject/UI工具/UI/UIText", false, 10)]
         public static void CreateText(MenuCommand command){
             GameObject go = new GameObject("Text");
             GameObjectUtility.SetParentAndAlign(go, command.context as GameObject);
